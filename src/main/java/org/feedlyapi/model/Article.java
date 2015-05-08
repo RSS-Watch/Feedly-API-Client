@@ -13,16 +13,12 @@ public class Article {
     private String originId;
     private Calendar published;
 
-    public Calendar getPublished() {
-        return published;
+    public String getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getContent() {
@@ -45,6 +41,21 @@ public class Article {
 
     public String getOriginId() {
         return originId;
+    }
+
+    public Calendar getPublished() {
+        return published;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Article article = (Article) o;
+
+        return id.equals(article.id);
+
     }
 
     class Content {
