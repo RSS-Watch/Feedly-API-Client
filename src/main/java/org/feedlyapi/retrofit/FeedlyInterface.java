@@ -1,5 +1,6 @@
 package org.feedlyapi.retrofit;
 
+import org.feedlyapi.model.Feed;
 import org.feedlyapi.model.Stream;
 import org.feedlyapi.model.Subscription;
 import retrofit.client.Response;
@@ -8,6 +9,14 @@ import retrofit.http.*;
 import java.util.List;
 
 public interface FeedlyInterface {
+
+    //region Feeds module
+    @GET("/feeds/{feedId}")
+    Feed getFeedMetadata(@Path("feedId") String feedId);
+
+    @POST("/feeds/.mget")
+    List<Feed> getFeedsMetadata(@Body List<String> feedIds);
+    //endregion
 
     //region Subscriptions module
     @GET("/subscriptions")
