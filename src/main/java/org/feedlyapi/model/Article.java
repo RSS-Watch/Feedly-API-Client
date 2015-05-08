@@ -26,12 +26,17 @@ public class Article {
     }
 
     public String getContent() {
-        return content.getContent();
-
+        if (content != null)
+            return content.getContent();
+        else
+            return null;
     }
 
     public String getSummary() {
-        return summary.getContent();
+        if (summary != null)
+            return summary.getContent();
+        else
+            return null;
     }
 
     public boolean isUnread() {
