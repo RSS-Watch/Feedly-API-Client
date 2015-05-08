@@ -20,7 +20,7 @@ public class FeedManager {
     public List<Article> getLatestArticles() {
         List<Article> articles = new LinkedList<Article>();
         for (Subscription subscription : api.getSubscriptions()) {
-            Stream stream = api.getStream(subscription.getFeedId());
+            Stream stream = api.getStreamContent(subscription.getFeedId(), 3, null, null, null, null);
             for (Article article : stream.getItems()) {
                 articles.add(article);
             }
