@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
         FeedManager api = new FeedManager(FeedlyApiProvider.getApi(args[0]));
-        for (Article article : api.getLatestArticles()) {
+        for (Article article : api.getLatestArticles(3)) {
             System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
         }
     }
