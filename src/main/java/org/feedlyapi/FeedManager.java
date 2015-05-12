@@ -17,10 +17,10 @@ public class FeedManager {
         this.api = api;
     }
 
-    public List<Article> getLatestArticles() {
+    public List<Article> getLatestArticles(int count) {
         List<Article> articles = new LinkedList<Article>();
         for (Subscription subscription : api.getSubscriptions()) {
-            Stream stream = api.getStreamContent(subscription.getFeedId(), 3, null, null, null, null);
+            Stream stream = api.getStreamContent(subscription.getFeedId(), count, null, null, null, null);
             for (Article article : stream.getItems()) {
                 articles.add(article);
             }
