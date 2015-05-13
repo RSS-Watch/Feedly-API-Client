@@ -1,9 +1,6 @@
 package org.feedlyapi.retrofit;
 
-import org.feedlyapi.model.Category;
-import org.feedlyapi.model.Feed;
-import org.feedlyapi.model.Stream;
-import org.feedlyapi.model.Subscription;
+import org.feedlyapi.model.*;
 import retrofit.client.Response;
 import retrofit.http.*;
 
@@ -31,7 +28,7 @@ public interface FeedlyInterface {
      *
      * (Authorization is <b>required</b>)
      *
-     * @param categoryId
+     * @param categoryId ID of the category
      * @return HTTP 200 OK
      * @throws retrofit.RetrofitError: 400 Bad Request when passing a non-existent category ID.
      * @see Category
@@ -46,7 +43,7 @@ public interface FeedlyInterface {
      *
      * (Authorization is <b>required</b>)
      *
-     * @param categoryId
+     * @param categoryId ID of the category
      * @return HTTP 200 OK
      * @throws retrofit.RetrofitError: 400 Bad Request when trying to delete system categories.
      */
@@ -60,6 +57,63 @@ public interface FeedlyInterface {
 
     @POST("/feeds/.mget")
     List<Feed> getFeedsMetadata(@Body List<String> feedIds);
+    //endregion
+
+    //region Profile module
+    /* Once a user is authenticated, a profile is attached to her. Feedly captures basic information such as name,
+    email, locale, etc. Applications can access that profile information and update parts of it.
+     */
+
+    /**
+     * Gets the profile of the authenticated user.
+     *
+     * @return Profile object containing user information.
+     * @see Profile
+     */
+    @GET("/profile")
+    Profile getProfile();
+    //endregion
+
+    //region Stream module
+
+    /**
+     * Gets Entry IDs of a stream.
+     * <p>
+     * (Authorization is <b>optional</b>; it is required for category and tag streams)
+     *
+     * @param id           A feed ID, category ID, tag ID or a system category ID can be used as stream ID.
+     * @param count        Number of entries to return. Default is 20, max is 10,000.
+     * @param ranked       Oldest or Newest articles first. Default is newest.
+     * @param unreadOnly   Unread articles only. Default is false.
+     * @param newerThan    Timestamp in ms.
+     * @param continuation A continuation ID used to page through the entry IDs.
+     * @return A Stream object containing the continuation string and the entry IDs.
+     * @see Stream
+     */
+    @GET("/streams/{id}/ids")
+    Stream getStreamEntries(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
+                            @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
+                            @Query("continuation") String continuation);
+
+    /**
+     * Gets Articles of a stream.
+     * <p>
+     * (Authorization is <b>optional</b>; it is required for category and tag streams)
+     *
+     * @param id           A feed ID, category ID, tag ID or a system category ID can be used as stream ID.
+     * @param count        Number of entries to return. Default is 20, max is 10,000.
+     * @param ranked       Oldest or Newest articles first. Default is newest.
+     * @param unreadOnly   Unread articles only. Default is false.
+     * @param newerThan    Timestamp in ms.
+     * @param continuation A continuation ID used to page through the entry IDs.
+     * @return A Stream object containing the stream ID, updated timestamp, continuation string, title, direction,
+     * alternate and a list of articles.
+     * @see Stream
+     */
+    @GET("/streams/{id}/contents")
+    Stream getStreamContent(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
+                            @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
+                            @Query("continuation") String continuation);
     //endregion
 
     //region Subscriptions module
@@ -114,52 +168,10 @@ public interface FeedlyInterface {
      *
      * (Authorization is <b>required</b>)
      *
-     * @param feedId
+     * @param feedId ID of the subscription
      * @return HTTP/200 - OK
      */
     @DELETE("/subscriptions/{feedId}")
     Response deleteSubscription(@Path("feedId") String feedId);
-    //endregion
-
-    //region Stream module
-
-    /**
-     * Gets Entry IDs of a stream.
-     *
-     * (Authorization is <b>optional</b>; it is required for category and tag streams)
-     *
-     * @param id A feed ID, category ID, tag ID or a system category ID can be used as stream ID.
-     * @param count Number of entries to return. Default is 20, max is 10,000.
-     * @param ranked Oldest or Newest articles first. Default is newest.
-     * @param unreadOnly Unread articles only. Default is false.
-     * @param newerThan Timestamp in ms.
-     * @param continuation A continuation ID used to page through the entry IDs.
-     * @return A Stream object containing the continuation string and the entry IDs.
-     * @see Stream
-     */
-    @GET("/streams/{id}/ids")
-    Stream getStreamEntries(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
-                            @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
-                            @Query("continuation") String continuation);
-
-    /**
-     * Gets Articles of a stream.
-     *
-     * (Authorization is <b>optional</b>; it is required for category and tag streams)
-     *
-     * @param id A feed ID, category ID, tag ID or a system category ID can be used as stream ID.
-     * @param count Number of entries to return. Default is 20, max is 10,000.
-     * @param ranked Oldest or Newest articles first. Default is newest.
-     * @param unreadOnly Unread articles only. Default is false.
-     * @param newerThan Timestamp in ms.
-     * @param continuation A continuation ID used to page through the entry IDs.
-     * @return A Stream object containing the stream ID, updated timestamp, continuation string, title, direction,
-     * alternate and a list of articles.
-     * @see Stream
-     */
-    @GET("/streams/{id}/contents")
-    Stream getStreamContent(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
-                            @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
-                            @Query("continuation") String continuation);
     //endregion
 }
