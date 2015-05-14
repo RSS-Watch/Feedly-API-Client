@@ -16,7 +16,7 @@ public interface FeedlyInterface {
      *
      * (Authorization is <b>required</b>)
      *
-     * @return Empty list when user has no categories.
+     * @return Empty list when user has no own categories and global.must has no feeds.
      * @see Category
      */
     @GET("/categories")
