@@ -7,6 +7,12 @@ import org.feedlyapi.model.Subscription;
 import org.feedlyapi.retrofit.FeedlyInterface;
 
 @SuppressWarnings("WeakerAccess")
+/**
+ * This class is used for wrapping the API calls of the FeedlyInterface to provide easier access to its functions.
+ *
+ * @author Dennis Effing
+ * @author Sebastian Schiller
+ */
 public class FeedManager {
 
     private final FeedlyInterface api;
