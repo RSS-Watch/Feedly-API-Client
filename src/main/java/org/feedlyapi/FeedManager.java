@@ -65,7 +65,7 @@ public class FeedManager {
      * The feedId field of every {@link Feed} object is mandatory.
      *
      * @param feeds List of {@link Feed} objects with feedId field.
-     * @return List of {@Link Feed} objects containing information (title, language, number of subscribers etc.)
+     * @return List of {@link Feed} objects containing information (title, language, number of subscribers etc.)
      */
     public List<Feed> getFeedsMetadata(List<Feed> feeds) {
         return api.getFeedsMetadata(feeds.stream()
@@ -301,5 +301,18 @@ public class FeedManager {
         return api.getStreamContent(feed.getFeedId(), count, null, null, null, continuation);
     }
     //endregion
+    //endregion
+
+    //region Subscription module
+
+    /**
+     * Gets a list of all user subscriptions. (Authorization is <b>required</b>)     *
+     *
+     * @return Empty list if there are no active user subscriptions.
+     * @see Subscription
+     */
+    public List<Subscription> getSubscriptions() {
+        return api.getSubscriptions();
+    }
     //endregion
 }
