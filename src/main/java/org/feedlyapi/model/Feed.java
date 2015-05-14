@@ -17,6 +17,10 @@ public class Feed {
     private String website;
     private List<String> topics;
 
+    public Feed(String feedId) {
+        this.feedId = feedId;
+    }
+
     public String getFeedId() {
         return feedId;
     }
@@ -51,5 +55,20 @@ public class Feed {
 
     public List<String> getTopics() {
         return topics;
+    }
+
+    @Override
+    public String toString() {
+        return "Feed{" +
+                "feedId='" + feedId + '\'' +
+                ", title='" + title + '\'' +
+                ", language='" + language + '\'' +
+                ", sponsored=" + sponsored +
+                ", featured=" + featured +
+                ", subscribers=" + subscribers +
+                ", velocity=" + velocity +
+                ", website='" + website + '\'' +
+                ", topics=" + topics +
+                '}';
     }
 }
