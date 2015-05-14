@@ -1,10 +1,10 @@
 package org.feedlyapi;
 
-import org.feedlyapi.model.Category;
-import org.feedlyapi.model.Feed;
-import org.feedlyapi.model.Stream;
-import org.feedlyapi.model.Subscription;
+import org.feedlyapi.model.*;
 import org.feedlyapi.retrofit.FeedlyInterface;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 /**
@@ -31,6 +31,63 @@ public class FeedManager {
         return api;
     }
 
+    //region Category module
+
+    /**
+     * Gets a list of all user categories. The global categories all and uncategorized will not be returned
+     * by this method. Global.must will only be returned if at least one feed is in this category.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @return Empty list when user has no own categories and global.must has no feeds.
+     * @see Category
+     */
+    public List<Category> getCategories() {
+        return api.getCategories();
+    }
+    //endregion
+
+    //region Feeds module
+
+    /**
+     * Gets information about a specified feed.
+     * The feedId field is mandatory.
+     *
+     * @param feed {@link Feed} object with feedId field.
+     * @return {@link Feed} object containing information (title, language, number of subscribers etc.)
+     */
+    public Feed getFeedMetadata(Feed feed) {
+        return api.getFeedMetadata(feed.getFeedId());
+    }
+
+    /**
+     * Gets information about a list of specified feeds.
+     * The feedId field of every {@link Feed} object is mandatory.
+     *
+     * @param feeds List of {@link Feed} objects with feedId field.
+     * @return List of {@Link Feed} objects containing information (title, language, number of subscribers etc.)
+     */
+    public List<Feed> getFeedsMetadata(List<Feed> feeds) {
+        return api.getFeedsMetadata(feeds.stream()
+                .map(Feed::getFeedId)
+                .collect(Collectors.toList()));
+    }
+    //endregion
+
+    //region Profile module
+
+    /**
+     * Gets the profile of the authenticated user.
+     *
+     * @return Profile object containing user information.
+     * @see Profile
+     */
+    public Profile getProfile() {
+        return api.getProfile();
+    }
+    //endregion
+
+    //region Stream module
     //region Get articles from global categories
     /**
      * Gets the latest articles of the global.all category.
@@ -162,7 +219,6 @@ public class FeedManager {
         return api.getStreamContent(globalMustReadCategoryId, count, null, null, null, continuation);
     }
     //endregion
-
     //region Get articles from Feeds, Subscriptions and user categories
     /**
      * Gets the latest articles of the specified category.
@@ -244,5 +300,6 @@ public class FeedManager {
     public Stream getLatestArticlesOfFeed(Feed feed, Integer count, String continuation) {
         return api.getStreamContent(feed.getFeedId(), count, null, null, null, continuation);
     }
+    //endregion
     //endregion
 }
