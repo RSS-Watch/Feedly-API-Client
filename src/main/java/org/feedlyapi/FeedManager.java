@@ -3,8 +3,8 @@ package org.feedlyapi;
 import org.feedlyapi.model.*;
 import org.feedlyapi.retrofit.FeedlyInterface;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 /**
@@ -68,9 +68,13 @@ public class FeedManager {
      * @return List of {@link Feed} objects containing information (title, language, number of subscribers etc.)
      */
     public List<Feed> getFeedsMetadata(List<Feed> feeds) {
-        return api.getFeedsMetadata(feeds.stream()
-                .map(Feed::getFeedId)
-                .collect(Collectors.toList()));
+        List<String> feedIds = new LinkedList<>();
+
+        for (Feed feed : feeds) {
+            feedIds.add(feed.getFeedId());
+        }
+
+        return api.getFeedsMetadata(feedIds);
     }
     //endregion
 
@@ -89,6 +93,7 @@ public class FeedManager {
 
     //region Stream module
     //region Get articles from global categories
+
     /**
      * Gets the latest articles of the global.all category.
      *
@@ -220,6 +225,7 @@ public class FeedManager {
     }
     //endregion
     //region Get articles from Feeds, Subscriptions and user categories
+
     /**
      * Gets the latest articles of the specified category.
      *
