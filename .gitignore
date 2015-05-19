@@ -5,8 +5,10 @@
 
 # Intellij
 .idea/workspace.xml
+.idea/workspace*.xml
 .idea/tasks.xml
 .idea/libraries
+.idea/dictionaries
 *.iws
 
 # Mac
@@ -17,5 +19,3 @@
 /local.properties
 /build
 /bin/
-.idea/dictionaries/Dennis.xml
-.idea/workspace-Dennis-PC.xml
