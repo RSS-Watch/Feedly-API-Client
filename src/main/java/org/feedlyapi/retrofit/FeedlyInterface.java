@@ -1,6 +1,7 @@
 package org.feedlyapi.retrofit;
 
 import org.feedlyapi.model.*;
+import retrofit.Callback;
 import retrofit.client.Response;
 import retrofit.http.*;
 
@@ -13,7 +14,7 @@ public interface FeedlyInterface {
     /**
      * Gets a list of all user categories. The global categories all and uncategorized will not be returned
      * by this method. Global.must will only be returned if at least one feed is in this category.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @return Empty list when user has no own categories and global.must has no feeds.
@@ -23,9 +24,15 @@ public interface FeedlyInterface {
     List<Category> getCategories();
 
     /**
+     * @see #getCategories()
+     */
+    @GET("/categories")
+    void getCategoriesAsync(Callback<List<Category>> callback);
+
+    /**
      * Updates the label of a given category.
      * Note: System categories cannot be re-labeled.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @param categoryId ID of the category
@@ -37,10 +44,16 @@ public interface FeedlyInterface {
     Response updateCategoryLabel(@Path("categoryId") String categoryId, @Body Category category);
 
     /**
+     * @see #updateCategoryLabel(String, Category)
+     */
+    @POST("/categories/{categoryId}")
+    void updateCategoryLabelAsync(@Path("categoryId") String categoryId, @Body Category category, Callback<Response> callback);
+
+    /**
      * Deletes a category.
      * Feeds with no category left will be moved to the "global.uncategorized" category automatically.
      * System categories cannot be deleted.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @param categoryId ID of the category
@@ -49,14 +62,32 @@ public interface FeedlyInterface {
      */
     @DELETE("/categories/{categoryId}")
     Response deleteCategory(@Path("categoryId") String categoryId);
+
+    /**
+     * @see #deleteCategory(String)
+     */
+    @DELETE("/categories/{categoryId}")
+    void deleteCategoryAsync(@Path("categoryId") String categoryId, Callback<Response> callback);
     //endregion
 
     //region Feeds module
     @GET("/feeds/{feedId}")
     Feed getFeedMetadata(@Path("feedId") String feedId);
 
+    /**
+     * @see #getFeedMetadata(String)
+     */
+    @GET("/feeds/{feedId}")
+    void getFeedMetadataAsync(@Path("feedId") String feedId, Callback<Feed> callback);
+
     @POST("/feeds/.mget")
     List<Feed> getFeedsMetadata(@Body List<String> feedIds);
+
+    /**
+     * @see #getFeedsMetadata(List)
+     */
+    @POST("/feeds/.mget")
+    void getFeedsMetadataAsync(@Body List<String> feedIds, Callback<List<Feed>> callback);
     //endregion
 
     //region Profile module
@@ -72,6 +103,12 @@ public interface FeedlyInterface {
      */
     @GET("/profile")
     Profile getProfile();
+
+    /**
+     * @see #getProfile()
+     */
+    @GET("/profile")
+    void getProfileAsync(Callback<Profile> callback);
     //endregion
 
     //region Stream module
@@ -96,6 +133,14 @@ public interface FeedlyInterface {
                             @Query("continuation") String continuation);
 
     /**
+     * @see #getStreamEntries(String, Integer, String, Boolean, Long, String)
+     */
+    @GET("/streams/{id}/ids")
+    void getStreamEntriesAsync(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
+                               @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
+                               @Query("continuation") String continuation, Callback<Stream> callback);
+
+    /**
      * Gets Articles of a stream.
      * <p>
      * (Authorization is <b>optional</b>; it is required for category and tag streams)
@@ -114,6 +159,14 @@ public interface FeedlyInterface {
     Stream getStreamContent(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
                             @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
                             @Query("continuation") String continuation);
+
+    /**
+     * @see #getStreamContent(String, Integer, String, Boolean, Long, String)
+     */
+    @GET("/streams/{id}/contents")
+    void getStreamContentAsync(@Path("id") String id, @Query("count") Integer count, @Query("ranked") String ranked,
+                               @Query("unreadOnly") Boolean unreadOnly, @Query("newerThan") Long newerThan,
+                               @Query("continuation") String continuation, Callback<Stream> callback);
     //endregion
 
     //region Subscriptions module
@@ -124,7 +177,7 @@ public interface FeedlyInterface {
 
     /**
      * Gets a list of all user subscriptions.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @return Empty list if there are no active user subscriptions.
@@ -134,11 +187,17 @@ public interface FeedlyInterface {
     List<Subscription> getSubscriptions();
 
     /**
+     * @see #addSubscription(Subscription)
+     */
+    @GET("/subscriptions")
+    void getSubscriptionsAsync(Callback<List<Subscription>> callback);
+
+    /**
      * Creates an active subscription to a feed for the user.
      * Only the <b>feedId</b> field is mandatory. If <b>title</b> is not present, the feed title will be used.
      * If <b>categories</b> is missing, the feed will automatically be added to the global uncategorized category
      * (ID: "global.uncategorized"). Global categories are automatically assigned.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @param subscription Subscription object containing feedId, title and categories.
@@ -150,10 +209,16 @@ public interface FeedlyInterface {
     Response addSubscription(@Body Subscription subscription);
 
     /**
+     * @see #addSubscription(Subscription)
+     */
+    @POST("/subscriptions")
+    void addSubscriptionAsync(@Body Subscription subscription, Callback<Response> callback);
+
+    /**
      * Updates an existing subscription.
      * This call will overwrite the subscription, not merge the content. If <b>title</b> is omitted, it will be
      * replaced with the feed title.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @param subscription Subscription object containing the feed ID and the updated title.
@@ -164,8 +229,14 @@ public interface FeedlyInterface {
     Response updateSubscription(@Body Subscription subscription);
 
     /**
+     * @see #updateSubscription(Subscription)
+     */
+    @POST("/subscriptions")
+    void updateSubscriptionAsync(@Body Subscription subscription, Callback<Response> callback);
+
+    /**
      * Deletes an existing subscription.
-     *
+     * <p>
      * (Authorization is <b>required</b>)
      *
      * @param feedId ID of the subscription
@@ -173,5 +244,11 @@ public interface FeedlyInterface {
      */
     @DELETE("/subscriptions/{feedId}")
     Response deleteSubscription(@Path("feedId") String feedId);
+
+    /**
+     * @see #deleteSubscription(String)
+     */
+    @DELETE("/subscriptions/{feedId}")
+    void deleteSubscriptionAsync(@Path("feedId") String feedId, Callback<Response> callback);
     //endregion
 }
