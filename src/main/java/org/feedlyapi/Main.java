@@ -2,34 +2,81 @@ package org.feedlyapi;
 
 import org.feedlyapi.help.FormatHelper;
 import org.feedlyapi.model.Article;
+import org.feedlyapi.model.Category;
 import org.feedlyapi.model.Stream;
 import org.feedlyapi.retrofit.FeedlyApiProvider;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 public class Main {
 
     public static void main(String[] args) {
-        FeedManager api = new FeedManager(FeedlyApiProvider.getApi(args[0]));
-        for (Article article : api.getLatestArticles(3).getItems()) {
-            System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
-        }
+        final FeedManager api = new FeedManager(FeedlyApiProvider.getApi(args[0]));
 
-        Stream stream = api.getLatestArticlesOfCategory(api.getApiInterface().getCategories().get(0), 5);
+        api.getLatestArticles(3, new Callback<Stream>() {
+            @Override
+            public void success(Stream stream, Response response) {
+                for (Article article : stream.getItems()) {
+                    System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
+                }
+            }
 
-        System.out.println("----------- Part 1 ----------");
-        for (Article article : stream.getItems()) {
-            System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
-        }
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+            }
+        });
 
-        stream = api.getLatestArticles(5, stream.getContinuation());
-        System.out.println("----------- Part 2 ----------");
-        for (Article article : stream.getItems()) {
-            System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
-        }
+        api.getCategories(new Callback<List<Category>>() {
+            @Override
+            public void success(List<Category> categories, Response response) {
+                listArticles(categories, api);
+            }
 
-//        FeedlyInterface api = FeedlyApiProvider.getApi(args[0]);
-//        System.out.println(api.deleteCategory("user/5edaf963-b660-479b-af5d-6fd66d937f15/category/global.all").getStatus());
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+            }
+        });
+    }
 
-//        System.out.println(api.getApiInterface().getProfile());
+    private static void listArticles(List<Category> categories, final FeedManager api) {
+        api.getLatestArticlesOfCategory(categories.get(0), 5, new Callback<Stream>() {
+            @Override
+            public void success(Stream stream, Response response) {
+                System.out.println("----------- Part 1 ----------");
+                for (Article article : stream.getItems()) {
+                    System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
+                }
+
+                listNextArticles(stream, api);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+            }
+        });
+    }
+
+    private static void listNextArticles(Stream stream, FeedManager api) {
+        api.getLatestArticles(5, stream.getContinuation(), new Callback<Stream>() {
+            @Override
+            public void success(Stream stream, Response response) {
+                System.out.println("----------- Part 2 ----------");
+                for (Article article : stream.getItems()) {
+                    System.out.println(article.getTitle() + " (" + FormatHelper.formatDateTime(article.getPublished()) + ")");
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+            }
+        });
     }
 }
