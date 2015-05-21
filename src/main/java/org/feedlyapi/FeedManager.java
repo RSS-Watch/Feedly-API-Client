@@ -2,6 +2,9 @@ package org.feedlyapi;
 
 import org.feedlyapi.model.*;
 import org.feedlyapi.retrofit.FeedlyInterface;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,8 +45,8 @@ public class FeedManager {
      * @return Empty list when user has no own categories and global.must has no feeds.
      * @see Category
      */
-    public List<Category> getCategories() {
-        return api.getCategories();
+    public void getCategories(Callback<List<Category>> callback) {
+        api.getCategoriesAsync(callback);
     }
     //endregion
 
@@ -56,8 +59,8 @@ public class FeedManager {
      * @param feed {@link Feed} object with feedId field.
      * @return {@link Feed} object containing information (title, language, number of subscribers etc.)
      */
-    public Feed getFeedMetadata(Feed feed) {
-        return api.getFeedMetadata(feed.getFeedId());
+    public void getFeedMetadata(Feed feed, Callback<Feed> callback) {
+        api.getFeedMetadataAsync(feed.getFeedId(), callback);
     }
 
     /**
@@ -67,14 +70,14 @@ public class FeedManager {
      * @param feeds List of {@link Feed} objects with feedId field.
      * @return List of {@link Feed} objects containing information (title, language, number of subscribers etc.)
      */
-    public List<Feed> getFeedsMetadata(List<Feed> feeds) {
+    public void getFeedsMetadata(List<Feed> feeds, Callback<List<Feed>> callback) {
         List<String> feedIds = new LinkedList<>();
 
         for (Feed feed : feeds) {
             feedIds.add(feed.getFeedId());
         }
 
-        return api.getFeedsMetadata(feedIds);
+        api.getFeedsMetadataAsync(feedIds, callback);
     }
     //endregion
 
@@ -101,8 +104,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestArticles(Integer count) {
-        return this.getLatestArticles(count, null);
+    public void getLatestArticles(Integer count, Callback<Stream> callback) {
+        this.getLatestArticles(count, null, callback);
     }
 
     /**
@@ -114,10 +117,19 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestArticles(Integer count, String continuation) {
-        String globalAllCategoryId = "user/" + api.getProfile().getId() + "/category/global.all";
+    public void getLatestArticles(final Integer count, final String continuation, final Callback<Stream> callback) {
+        api.getProfileAsync(new Callback<Profile>() {
+            @Override
+            public void success(Profile profile, Response response) {
+                String globalAllCategoryId = "user/" + profile.getId() + "/category/global.all";
+                api.getStreamContentAsync(globalAllCategoryId, count, null, null, null, continuation, callback);
+            }
 
-        return api.getStreamContent(globalAllCategoryId, count, null, null, null, continuation);
+            @Override
+            public void failure(RetrofitError error) {
+                callback.failure(error);
+            }
+        });
     }
 
     /**
@@ -127,8 +139,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestReadArticles(Integer count) {
-        return getLatestReadArticles(count, null);
+    public void getLatestReadArticles(Integer count, Callback<Stream> callback) {
+        getLatestReadArticles(count, null, callback);
     }
 
     /**
@@ -140,10 +152,19 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestReadArticles(Integer count, String continuation) {
-        String globalReadCategoryId = "user/" + api.getProfile().getId() + "/category/global.read";
+    public void getLatestReadArticles(final Integer count, final String continuation, final Callback<Stream> callback) {
+        api.getProfileAsync(new Callback<Profile>() {
+            @Override
+            public void success(Profile profile, Response response) {
+                String globalReadCategoryId = "user/" + profile.getId() + "/category/global.read";
+                api.getStreamContentAsync(globalReadCategoryId, count, null, null, null, continuation, callback);
+            }
 
-        return api.getStreamContent(globalReadCategoryId, count, null, null, null, continuation);
+            @Override
+            public void failure(RetrofitError error) {
+                callback.failure(error);
+            }
+        });
     }
 
     /**
@@ -153,8 +174,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestSavedArticles(Integer count) {
-        return getLatestSavedArticles(count, null);
+    public void getLatestSavedArticles(Integer count, Callback<Stream> callback) {
+        getLatestSavedArticles(count, null, callback);
     }
 
     /**
@@ -166,10 +187,19 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestSavedArticles(Integer count, String continuation) {
-        String globalSavedCategoryId = "user/" + api.getProfile().getId() + "/category/global.saved";
+    public void getLatestSavedArticles(final Integer count, final String continuation, final Callback<Stream> callback) {
+        api.getProfileAsync(new Callback<Profile>() {
+            @Override
+            public void success(Profile profile, Response response) {
+                String globalSavedCategoryId = "user/" + profile.getId() + "/category/global.saved";
+                api.getStreamContentAsync(globalSavedCategoryId, count, null, null, null, continuation, callback);
+            }
 
-        return api.getStreamContent(globalSavedCategoryId, count, null, null, null, continuation);
+            @Override
+            public void failure(RetrofitError error) {
+                callback.failure(error);
+            }
+        });
     }
 
     /**
@@ -179,8 +209,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestUncategorizedArticles(Integer count) {
-        return getLatestUncategorizedArticles(count, null);
+    public void getLatestUncategorizedArticles(Integer count, Callback<Stream> callback) {
+        getLatestUncategorizedArticles(count, null, callback);
     }
 
     /**
@@ -192,10 +222,19 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestUncategorizedArticles(Integer count, String continuation) {
-        String globalUncategorizedCategoryId = "user/" + api.getProfile().getId() + "/category/global.uncategorized";
+    public void getLatestUncategorizedArticles(final Integer count, final String continuation, final Callback<Stream> callback) {
+        api.getProfileAsync(new Callback<Profile>() {
+            @Override
+            public void success(Profile profile, Response response) {
+                String globalUncategorizedCategoryId = "user/" + profile.getId() + "/category/global.uncategorized";
+                api.getStreamContentAsync(globalUncategorizedCategoryId, count, null, null, null, continuation, callback);
+            }
 
-        return api.getStreamContent(globalUncategorizedCategoryId, count, null, null, null, continuation);
+            @Override
+            public void failure(RetrofitError error) {
+                callback.failure(error);
+            }
+        });
     }
 
     /**
@@ -205,8 +244,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestMustReadArticles(Integer count) {
-        return getLatestMustReadArticles(count, null);
+    public void getLatestMustReadArticles(Integer count, Callback<Stream> callback) {
+        getLatestMustReadArticles(count, null, callback);
     }
 
     /**
@@ -218,10 +257,19 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestMustReadArticles(Integer count, String continuation) {
-        String globalMustReadCategoryId = "user/" + api.getProfile().getId() + "/category/global.must";
+    public void getLatestMustReadArticles(final Integer count, final String continuation, final Callback<Stream> callback) {
+        api.getProfileAsync(new Callback<Profile>() {
+            @Override
+            public void success(Profile profile, Response response) {
+                String globalMustReadCategoryId = "user/" + profile.getId() + "/category/global.must";
+                api.getStreamContentAsync(globalMustReadCategoryId, count, null, null, null, continuation, callback);
+            }
 
-        return api.getStreamContent(globalMustReadCategoryId, count, null, null, null, continuation);
+            @Override
+            public void failure(RetrofitError error) {
+                callback.failure(error);
+            }
+        });
     }
     //endregion
     //region Get articles from Feeds, Subscriptions and user categories
@@ -234,8 +282,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestArticlesOfCategory(Category category, Integer count) {
-        return getLatestArticlesOfCategory(category, count, null);
+    public void getLatestArticlesOfCategory(Category category, Integer count, Callback<Stream> callback) {
+        getLatestArticlesOfCategory(category, count, null, callback);
     }
 
     /**
@@ -249,8 +297,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the Stream.
      * @see Stream
      */
-    public Stream getLatestArticlesOfCategory(Category category, Integer count, String continuation) {
-        return api.getStreamContent(category.getId(), count, null, null, null, continuation);
+    public void getLatestArticlesOfCategory(Category category, Integer count, String continuation, Callback<Stream> callback) {
+        api.getStreamContentAsync(category.getId(), count, null, null, null, continuation, callback);
     }
 
     /**
@@ -261,8 +309,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the stream.
      * @see Stream
      */
-    public Stream getLatestArticlesOfSubscription(Subscription subscription, Integer count) {
-        return getLatestArticlesOfSubscription(subscription, count, null);
+    public void getLatestArticlesOfSubscription(Subscription subscription, Integer count, Callback<Stream> callback) {
+        getLatestArticlesOfSubscription(subscription, count, null, callback);
     }
 
     /**
@@ -276,8 +324,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the stream.
      * @see Stream
      */
-    public Stream getLatestArticlesOfSubscription(Subscription subscription, Integer count, String continuation) {
-        return api.getStreamContent(subscription.getFeedId(), count, null, null, null, continuation);
+    public void getLatestArticlesOfSubscription(Subscription subscription, Integer count, String continuation, Callback<Stream> callback) {
+        api.getStreamContentAsync(subscription.getFeedId(), count, null, null, null, continuation, callback);
     }
 
     /**
@@ -288,8 +336,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the stream.
      * @see Stream
      */
-    public Stream getLatestArticlesOfFeed(Feed feed, Integer count) {
-        return getLatestArticlesOfFeed(feed, count, null);
+    public void getLatestArticlesOfFeed(Feed feed, Integer count, Callback<Stream> callback) {
+        getLatestArticlesOfFeed(feed, count, null, callback);
     }
 
     /**
@@ -303,8 +351,8 @@ public class FeedManager {
      * @return Stream object containing article entries and other information about the stream.
      * @see Stream
      */
-    public Stream getLatestArticlesOfFeed(Feed feed, Integer count, String continuation) {
-        return api.getStreamContent(feed.getFeedId(), count, null, null, null, continuation);
+    public void getLatestArticlesOfFeed(Feed feed, Integer count, String continuation, Callback<Stream> callback) {
+        api.getStreamContentAsync(feed.getFeedId(), count, null, null, null, continuation, callback);
     }
     //endregion
     //endregion
@@ -317,8 +365,8 @@ public class FeedManager {
      * @return Empty list if there are no active user subscriptions.
      * @see Subscription
      */
-    public List<Subscription> getSubscriptions() {
-        return api.getSubscriptions();
+    public void getSubscriptions(Callback<List<Subscription>> callback) {
+        api.getSubscriptionsAsync(callback);
     }
     //endregion
 }
