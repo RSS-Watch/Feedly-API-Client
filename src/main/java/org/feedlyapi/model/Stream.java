@@ -25,8 +25,7 @@ public class Stream {
         return title;
     }
 
-    public String getContinuation()
-    {
+    public String getContinuation() {
         return continuation;
     }
 
