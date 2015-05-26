@@ -109,7 +109,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestArticles(Integer)} but considers a continuation string when fetching articles.
+     * Works like {@link #getLatestArticles(Integer, Callback)} but considers a continuation string when fetching articles.
      *
      * @param count        Number of articles. Default is 20 (when null), max is 10,000.
      * @param continuation Continuation String of the last call. This ID guarantees that no entry will be duplicated
@@ -144,7 +144,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestReadArticles(Integer)} but considers a continuation string when fetching articles.
+     * Works like {@link #getLatestReadArticles(Integer, Callback)} but considers a continuation string when fetching articles.
      *
      * @param count        Number of articles. Default is 20 (when null), max is 10,000.
      * @param continuation Continuation String of the last call. This ID guarantees that no entry will be duplicated
@@ -179,7 +179,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestSavedArticles(Integer)} but considers a continuation string when fetching articles.
+     * Works like {@link #getLatestSavedArticles(Integer, Callback)} but considers a continuation string when fetching articles.
      *
      * @param count        Number of articles. Default is 20 (when null), max is 10,000.
      * @param continuation Continuation String of the last call. This ID guarantees that no entry will be duplicated
@@ -214,7 +214,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestUncategorizedArticles(Integer)} but considers a continuation string when fetching articles.
+     * Works like {@link #getLatestUncategorizedArticles(Integer, Callback)} but considers a continuation string when fetching articles.
      *
      * @param count        Number of articles. Default is 20 (when null), max is 10,000.
      * @param continuation Continuation String of the last call. This ID guarantees that no entry will be duplicated
@@ -249,7 +249,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestMustReadArticles(Integer)} but considers a continuation string when fetching articles.
+     * Works like {@link #getLatestMustReadArticles(Integer, Callback)} but considers a continuation string when fetching articles.
      *
      * @param count        Number of articles. Default is 20 (when null), max is 10,000.
      * @param continuation Continuation String of the last call. This ID guarantees that no entry will be duplicated
@@ -287,7 +287,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestArticlesOfCategory(Category, Integer)} but considers a continuation string when
+     * Works like {@link #getLatestArticlesOfCategory(Category, Integer, Callback)} but considers a continuation string when
      * fetching articles.
      *
      * @param category     Category object containing information about the specified category.
@@ -314,7 +314,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestArticlesOfSubscription(Subscription, Integer)} but considers a continuation
+     * Works like {@link #getLatestArticlesOfSubscription(Subscription, Integer, Callback)} but considers a continuation
      * String when fetching articles.
      *
      * @param subscription Subscription object containing the feed ID.
@@ -341,7 +341,7 @@ public class FeedManager {
     }
 
     /**
-     * Works like {@link #getLatestArticlesOfFeed(Feed, Integer)} but considers a continuation String when fetching
+     * Works like {@link #getLatestArticlesOfFeed(Feed, Integer, Callback)} but considers a continuation String when fetching
      * articles.
      *
      * @param feed         Feed object containing the feed ID.
