@@ -17,8 +17,16 @@ public class Article {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
@@ -28,6 +36,10 @@ public class Article {
             return null;
     }
 
+    public void setContent(Content content) {
+        this.content = content;
+    }
+
     public String getSummary() {
         if (summary != null)
             return summary.getContent();
@@ -35,16 +47,32 @@ public class Article {
             return null;
     }
 
+    public void setSummary(Content summary) {
+        this.summary = summary;
+    }
+
     public boolean isUnread() {
         return unread;
+    }
+
+    public void setUnread(boolean unread) {
+        this.unread = unread;
     }
 
     public String getOriginId() {
         return originId;
     }
 
+    public void setOriginId(String originId) {
+        this.originId = originId;
+    }
+
     public Calendar getPublished() {
         return published;
+    }
+
+    public void setPublished(Calendar published) {
+        this.published = published;
     }
 
     @Override
