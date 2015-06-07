@@ -1,6 +1,7 @@
 package org.feedlyapi.retrofit;
 
 import org.feedlyapi.model.*;
+import org.feedlyapi.model.requests.*;
 import retrofit.Callback;
 import retrofit.client.Response;
 import retrofit.http.*;
@@ -88,6 +89,200 @@ public interface FeedlyInterface {
      */
     @POST("/feeds/.mget")
     void getFeedsMetadataAsync(@Body List<String> feedIds, Callback<List<Feed>> callback);
+    //endregion
+
+    //region Marker module
+
+    /**
+     * Gets the unread counts for every feed and category in the account (unless a streamId is passed).
+     * Unread counts are capped at 1,000 for each individual feed (the server will stop counting once it reaches this
+     * number). The total unread count will appear in the global.all category.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param autorefresh Let's the server know if this is a background auto-refresh or not. In case of very high load
+     *                    on the service, the server can deny access to background requests and give priority
+     *                    to user facing operations.
+     * @param newerThan   Timestamp used as a lower time limit, instead of the default 30 days.
+     * @param streamId    A user or system category can be passed to restrict the unread count response to feeds in this
+     *                    category.
+     * @return UnreadCount object containing the id, updated timestamp and actual count number.
+     * @see UnreadCount
+     */
+    @GET("/markers/counts")
+    List<UnreadCount> getUnreadCounts(@Query("autorefresh") Boolean autorefresh, @Query("newerThan")Long newerThan, @Query("streamId") String streamId);
+
+    /**
+     * @see #getUnreadCounts(Boolean, Long, String)
+     */
+    @GET("/markers/counts")
+    void getUnreadCountsAsync(@Query("autorefresh") Boolean autorefresh, @Query("newerThan") Long newerThan, @Query("streamId") String streamId, Callback<List<UnreadCount>> callback);
+
+    /**
+     * Marks one or more articles as read.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param request Request object containing the entry IDs (article IDs).
+     * @return HTTP/200 - OK
+     * @see MarkArticlesAsReadRequest
+     */
+    @POST("/markers")
+    Response markArticlesAsRead(@Body MarkArticlesAsReadRequest request);
+
+    /**
+     * @see #markArticlesAsRead(MarkArticlesAsReadRequest)
+     */
+    @POST("/markers")
+    void markArticlesAsReadAsync(@Body MarkArticlesAsReadRequest request, Callback<Response> callback);
+
+    /**
+     * Marks one or more articles as unread and keeps them unread until the user explicitly marks them as read.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param request Request object containing the entry IDs (article IDs).
+     * @return HTTP/200 - OK
+     * @see MarkArticlesAsUnreadRequest
+     */
+    @POST("/markers")
+    Response markArticlesAsUnread(@Body MarkArticlesAsUnreadRequest request);
+
+    /**
+     * @see #markArticlesAsUnread(MarkArticlesAsUnreadRequest)
+     */
+    @POST("/markers")
+    void markArticlesAsUnreadAsync(@Body MarkArticlesAsUnreadRequest request, Callback<Response> callback);
+
+    /**
+     * Marks one or more feeds as read.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param request Request object containing the feed IDs.
+     * @return HTTP/200 - OK
+     * @see MarkFeedAsReadRequest
+     */
+    @POST("/markers")
+    Response markFeedAsRead(@Body MarkFeedAsReadRequest request);
+
+    /**
+     * @see #markFeedAsRead(MarkFeedAsReadRequest)
+     */
+    @POST("/markers")
+    void markFeedAsReadAsync(@Body MarkFeedAsReadRequest request, Callback<Response> callback);
+
+    /**
+     * Marks one or more categories as read.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param request Request object containing the category IDs.
+     * @return HTTP/200 - OK
+     * @see MarkCategoryAsReadRequest
+     */
+    @POST("/markers")
+    Response markCategoryAsRead(@Body MarkCategoryAsReadRequest request);
+
+    /**
+     * @see #markCategoryAsRead(MarkCategoryAsReadRequest)
+     */
+    @POST("/markers")
+    void markCategoryAsReadAsync(@Body MarkCategoryAsReadRequest request, Callback<Response> callback);
+
+    /**
+     * @see #undoMarkFeedAsRead(UndoMarkFeedAsReadRequest)
+     * @param request Request object containing the category IDs.
+     * @return HTTP/200 - OK
+     */
+    @POST("/markers")
+    Response undoMarkCategoryAsRead(@Body UndoMarkCategoryAsReadRequest request);
+
+    /**
+     * @see #undoMarkFeedAsRead(UndoMarkFeedAsReadRequest)
+     * @param request Request object containing the category IDs.
+     */
+    @POST("/markers")
+    void undoMarkCategoryAsReadAsync(@Body UndoMarkCategoryAsReadRequest request, Callback<Response> callback);
+
+    /**
+     * This is a one-time undo operation. It will revert to the previous mark-as-read marker, if there is one, for the specified feeds.
+     *
+     * Example sequence:
+     *
+     * <pre>
+     - Add a feed
+     - Mark feed as read to entry #1
+     - Undo mark as read for feed: no change (because there is no history)
+     - Mark feed as read to entry #2
+     - Mark all as read to entry #3
+     - Undo mark as read for feed: reverts marker to entry #2
+     - Undo mark as read for feed again: no change (because there is no previous record)
+     </pre>
+     * @param request Request object containing the feed IDs.
+     * @return HTTP/200 - OK
+     * @see UndoMarkFeedAsReadRequest
+     */
+    @POST("/markers")
+    Response undoMarkFeedAsRead(@Body UndoMarkFeedAsReadRequest request);
+
+    /**
+     * @see #undoMarkFeedAsRead(UndoMarkFeedAsReadRequest)
+     */
+    @POST("/markers")
+    void undoMarkFeedAsReadAsync(@Body UndoMarkFeedAsReadRequest request);
+
+    /**
+     * Marks one or more articles as saved for later. This is an alternative to POST /v3/tags.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param request Request object containing the article IDs (entry IDs).
+     * @return HTTP/200 - OK
+     * @see MarkArticlesAsSavedRequest
+     */
+    @POST("/markers")
+    Response markArticleAsSaved(@Body MarkArticlesAsSavedRequest request);
+
+    /**
+     * @see #markArticleAsSaved(MarkArticlesAsSavedRequest)
+     */
+    @POST("/markers")
+    void markArticlesAsSavedAsync(@Body MarkArticlesAsSavedRequest request, Callback<Response> callback);
+
+    /**
+     * Marks one or more articles as unsaved.
+     * <p>
+     * (Authorization is <b>required</b>)
+     *
+     * @param request Request object containing the article IDs (entry IDs).
+     * @return HTTP/200 - OK
+     * @see MarkArticlesAsUnreadRequest
+     */
+    @POST("/markers")
+    Response markArticlesAsUnsaved(@Body MarkArticlesAsUnsavedRequest request);
+
+    /**
+     * @see #markArticlesAsUnsaved(MarkArticlesAsUnsavedRequest)
+     */
+    @POST("/markers")
+    void markArticlesAsUnsavedAsync(@Body MarkArticlesAsUnsavedRequest request, Callback<Response> callback);
+
+    /**
+     * Gets the latest read operations (to sync local cache).
+     * @param timestamp Timestamp in ms. Default is 30 days.
+     * @return ReadOperations object containing a list of read feeds, read entries and entries marked as unread.
+     * @see ReadOperations
+     */
+    @GET("/markers/reads")
+    ReadOperations getLatestReadOperations(@Query("timestamp") Long timestamp);
+
+    /**
+     * @see #getLatestReadOperations(Long)
+     */
+    @GET("/markers/reads")
+    void getLatestReadOperationsAsync(@Query("timestamp") Long timestamp, Callback<ReadOperations> callback);
+
     //endregion
 
     //region Profile module
