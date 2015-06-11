@@ -72,6 +72,17 @@ public interface FeedlyInterface {
     //endregion
 
     //region Feeds module
+
+    /**
+     * Gets metadata about a feed processed by the feedly cloud platform.
+     *
+     * Note: This endpoint will do a real-time fetch of the feed if the submitted feed is not yet part of the feedly
+     * cloud.
+     * @param feedId Unique, immutable id of the required feed.
+     * @return Feed object containing information about the amount of subscribers, feed title, feed description,
+     * language, website, topics etc.
+     * @see Feed
+     */
     @GET("/feeds/{feedId}")
     Feed getFeedMetadata(@Path("feedId") String feedId);
 
@@ -81,6 +92,15 @@ public interface FeedlyInterface {
     @GET("/feeds/{feedId}")
     void getFeedMetadataAsync(@Path("feedId") String feedId, Callback<Feed> callback);
 
+    /**
+     * Gets metadata about multiple feeds processed by the feedly cloud platform.
+     *
+     * Note: This endpoint will do a real-time fetch for feeds if they are not yet part of the feedly cloud.
+     * @param feedIds List of unique, immutable ids of the required feeds.
+     * @return List of Feed objects, containing information about the amount of subscribers, feed title, feed
+     * description, language, website, topics etc.
+     * @see Feed
+     */
     @POST("/feeds/.mget")
     List<Feed> getFeedsMetadata(@Body List<String> feedIds);
 
