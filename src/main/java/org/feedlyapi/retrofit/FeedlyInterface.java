@@ -10,6 +10,52 @@ import java.util.List;
 
 public interface FeedlyInterface {
 
+    //region Authorization module
+
+    /**
+     * Exchanges authorization code for an access token and refresh token ({@link TokenObject}).
+     * @param request {@link TokenRequest} object containing code, client id, client secret, redirect uri and optional
+     * state
+     * @return TokenObject containing user id, access token, refresh token and other metadata.
+     * @see TokenObject
+     */
+    @POST("/auth/token")
+    @Headers("Content-Type: application/json")
+    TokenObject getAccessToken(@Body TokenRequest request);
+
+    /**
+     * @see #getAccessToken(TokenRequest)
+     */
+    @POST("/auth/token")
+    @Headers("Content-Type: application/json")
+    void getAccessTokenAsync(@Body TokenRequest request, Callback<TokenObject> callback);
+
+    /**
+     * Obtains a new access token by sending a refresh token to the feedly authorization server.
+     * @param request {@link RefreshTokenRequest} object containing refresh token, client id and client secret.
+     * @return TokenObject containing user id, access token and other metadata.
+     * @see TokenObject
+     */
+    @POST("/auth/token")
+    @Headers("Content-Type: application/json")
+    TokenObject useRefreshToken(@Body RefreshTokenRequest request);
+
+    /**
+     * @see #useRefreshToken(RefreshTokenRequest)
+     */
+    @POST("/auth/token")
+    @Headers("Content-Type: application/json")
+    void useRefreshTokenAsync(@Body RefreshTokenRequest request, Callback<TokenObject> callback);
+
+    @POST("/auth/token")
+    @Headers("Content-Type: application/json")
+    TokenObject revokeRefreshToken(@Body RevokeRefreshTokenRequest request);
+
+    @POST("/auth/token")
+    @Headers("Content-Type: application/json")
+    void revokeRefreshTokenAsync(@Body RevokeRefreshTokenRequest request, Callback<TokenObject> callback);
+    //endregion
+
     //region Category module
 
     /**
