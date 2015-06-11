@@ -11,8 +11,9 @@ import java.util.Calendar;
 public class FeedlyApiProvider {
 
     private static FeedlyInterface api;
+    private static String accessToken = "";
 
-    private static FeedlyInterface create(final String accessToken) {
+    private static FeedlyInterface create() {
         RestAdapter adapter = new RestAdapter.Builder()
                 .setEndpoint("http://sandbox.feedly.com/v3")
                 .setRequestInterceptor(new RequestInterceptor() {
@@ -41,10 +42,14 @@ public class FeedlyApiProvider {
         return new GsonConverter(builder.create());
     }
 
-    public static FeedlyInterface getApi(String accessToken) {
+    public static FeedlyInterface getApi() {
         if (api == null) {
-            api = create(accessToken);
+            api = create();
         }
         return api;
+    }
+
+    public static void setAccessToken(String _accessToken) {
+        accessToken = _accessToken;
     }
 }

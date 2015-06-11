@@ -15,7 +15,8 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        final FeedManager api = new FeedManager(FeedlyApiProvider.getApi(args[0]));
+        final FeedManager api = new FeedManager(FeedlyApiProvider.getApi());
+        FeedlyApiProvider.setAccessToken(args[0]);
 
         api.getLatestArticles(3, new Callback<Stream>() {
             @Override
