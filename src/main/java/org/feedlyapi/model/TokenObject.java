@@ -20,7 +20,7 @@ public class TokenObject {
         this.userId = userId;
     }
 
-    public String getAccess_token() {
+    public String getAccessToken() {
         return access_token;
     }
 
